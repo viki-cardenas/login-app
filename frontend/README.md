@@ -42,7 +42,7 @@ Se considero la estructura del frontend y backend en el mismo repositorio ya que
 ## Instalación y Uso
 ```bash
 # Clonar el repositorio
-git clone https://github.com/viki-cardenas/sis_musica.git
+git clone https://github.com/viki-cardenas/login-app.git
 
 # Instalar dependencias
 npm install
