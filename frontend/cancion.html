@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Barca - Letra (Verde y Negro)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Configuración de Tailwind para colores Verde/Negro y fuente Inter -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#10b981', // Verde Esmeralda Vibrante (Éxito)
+                        'secondary': '#34d399', // Verde Medio (Acento)
+                        'background': '#0a0a0a', // Negro Profundo
+                        'card': '#1a1a1a', // Negro Ligeramente más claro para la tarjeta
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Estilos personalizados para el tema oscuro y barra de desplazamiento estética */
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+        /* Estilos de la barra de desplazamiento solo para el contenedor de la letra */
+        .lyric-box::-webkit-scrollbar {
+            width: 8px;
+        }
+        .lyric-box::-webkit-scrollbar-thumb {
+            background-color: #10b981; /* Verde Primario */
+            border-radius: 10px;
+        }
+        .lyric-box::-webkit-scrollbar-track {
+            background-color: #1a1a1a; /* Negro de la tarjeta */
+        }
+    </style>
+</head>
+<body class="bg-background text-gray-100 flex items-center justify-center p-4">
+
+    <!-- Contenedor Principal de la Tarjeta de la Canción -->
+    <div class="w-full max-w-4xl bg-card shadow-2xl rounded-xl p-8 md:p-12 space-y-8 border border-gray-800">
+
+        <!-- Sección de Encabezado: Título y Artista -->
+        <header class="text-center border-b border-primary pb-4">
+            <h1 class="text-5xl font-extrabold text-primary leading-tight tracking-tight sm:text-6xl">
+                La Barca
+            </h1>
+            <p class="text-xl text-secondary mt-2 font-medium">
+                — Interpretada por El Artista Romántico —
+            </p>
+        </header>
+
+        <!-- Detalles de la Canción (Metadatos) -->
+        <div class="flex flex-wrap justify-center gap-3 text-sm text-gray-300">
+            <span class="px-3 py-1 bg-gray-800 rounded-full font-semibold shadow-lg border border-secondary/50">Género: Bolero Ranchero</span>
+            <span class="px-3 py-1 bg-gray-800 rounded-full font-semibold shadow-lg border border-secondary/50">Compositor: Raúl Aguilar</span>
+            <span class="px-3 py-1 bg-gray-800 rounded-full font-semibold shadow-lg border border-secondary/50">Año: 1957</span>
+        </div>
+
+        <!-- Sección de Letras -->
+        <section>
+            <h2 class="text-3xl font-bold text-gray-200 mb-6 border-l-4 border-primary pl-3">
+                Letra de la Canción
+            </h2>
+            <!-- Caja de Letras con Desplazamiento (Scrollable Lyric Box) -->
+            <div class="lyric-box h-96 overflow-y-auto bg-gray-900 p-6 rounded-lg shadow-inner text-lg leading-relaxed text-gray-300 whitespace-pre-wrap border border-primary/20">
+                <!-- Letra de Ejemplo (Reemplazar por la letra real) -->
+                <p>
+                    Dicen que la distancia es el olvido,
+                    pero yo no concibo esa razón,
+                    porque yo seguiré siendo tu amante
+                    aunque no estés conmigo, corazón.
+                </p>
+
+                <p class="mt-6 font-bold text-primary">
+                    (Estribillo)
+                </p>
+
+                <p>
+                    Ha llegado el momento de separarnos,
+                    ya no me queda nada de tu amor,
+                    y aunque me duela tanto tu partida,
+                    espero que te vaya mucho mejor.
+                </p>
+
+                <p class="mt-6">
+                    Se me está hundiendo el barco de tu vida,
+                    por el mar de la amargura y del dolor,
+                    ya mi barca de amores no navega,
+                    se ha quedado sin velas y sin motor.
+                </p>
+
+                <p class="mt-6">
+                    Adiós, adiós, mi amor,
+                    yo te deseo toda la suerte del mundo,
+                    te quiero y adiós.
+                </p>
+
+                <p class="mt-6">
+                    Dicen que la distancia es el olvido...
+                </p>
+
+            </div>
+        </section>
+
+        <!-- Pie de página / Área de Acción -->
+        <footer class="text-center pt-4">
+            <button class="bg-secondary hover:bg-primary text-gray-900 font-bold py-3 px-6 rounded-full transition duration-300 transform hover:scale-105 shadow-xl shadow-secondary/50 focus:outline-none focus:ring-4 focus:ring-secondary focus:ring-opacity-50">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                </svg>
+                Escuchar en la App
+            </button>
+        </footer>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio - Music Spotify</title>
+    <!-- Carga de Tailwind CSS para un estilo moderno y responsive -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilos básicos para la estructura y el tema oscuro (similar a Spotify) */
+        :root {
+            --primary-bg: #121212;
+            --secondary-bg: #1a1a1a;
+            --text-color: #ffffff;
+            --highlight-color: #1ed760;
+            --sidebar-width: 220px; 
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+        .app-container {
+            display: flex;
+        }
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            padding: 20px;
+            background-color: var(--secondary-bg);
+            position: fixed;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+        }
+        .sidebar h2 {
+            color: var(--text-color);
+            margin-bottom: 30px;
+            font-size: 1.5em;
+        }
+        .sidebar a {
+            display: block;
+            color: #b3b3b3;
+            text-decoration: none;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            transition: color 0.2s, background-color 0.2s;
+        }
+        .sidebar a:hover {
+            color: var(--text-color);
+            background-color: #282828;
+        }
+        .sidebar a.active {
+            color: var(--text-color);
+            background-color: #282828;
+            font-weight: bold;
+        }
+        .main-view {
+            /* Asegura que el contenido principal se desplace */
+            margin-left: var(--sidebar-width); 
+            padding: 30px;
+            flex-grow: 1;
+        }
+        /* Estilo para las tarjetas de fila horizontal */
+        .row-card {
+            min-width: 150px; /* Tamaño mínimo para tarjetas en la fila */
+            width: 150px;
+        }
+        /* Oculta la barra de scroll en navegadores basados en WebKit (Chrome, Safari) */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        /* Oculta la barra de scroll en Firefox */
+        .scrollbar-hide {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+    </style>
+</head>
+
+<body>
+<div class="app-container">
+
+    <!-- Barra lateral -->
+    <aside class="sidebar">
+        <h2>MusicApp</h2>
+        <!-- Menú de navegación -->
+        <a class="active" href="home.html">Inicio</a>
+        <a href="artistas.html">Artistas</a>
+        <a href="albums.html">Álbumes</a>
+        <a href="canciones.html">Canciones</a>
+        <a href="playlist.html">Playlist</a>
+        <a href="perfil.html">Perfil</a>
+    </aside>
+
+    <!-- Contenido principal -->
+    <main class="main-view">
+        <h1 id="greeting" class="text-4xl font-extrabold mb-8"></h1>
+        
+        <!-- Sección 1: Tarjetas de Acceso Rápido (6 ítems) -->
+        <h2 class="text-2xl font-bold mb-5">Visto Recientemente</h2>
+        
+        <div 
+            id="quick-access-grid"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10"
+        >
+            <!-- Las tarjetas se insertarán aquí por JavaScript -->
+        </div>
+
+        <!-- Sección 2: Mixes Personalizados (Fila con scroll horizontal) -->
+        <h2 class="text-2xl font-bold mb-5">Hecho para ti</h2>
+        
+        <div 
+            id="made-for-you-row"
+            class="flex overflow-x-auto gap-5 pb-4 scrollbar-hide"
+        >
+            <!-- Las tarjetas de mix se insertarán aquí por JavaScript -->
+        </div>
+        
+    </main>
+</div>
+
+<script>
+    // --- Lógica del Greeting (Buenos Días/Tardes/Noches) ---
+    function setGreeting() {
+        const hour = new Date().getHours();
+        const greetingElement = document.getElementById('greeting');
+        let greeting;
+
+        if (hour < 12) {
+            greeting = "Buenos Días";
+        } else if (hour < 19) {
+            greeting = "Buenas Tardes";
+        } else {
+            greeting = "Buenas Noches";
+        }
+
+        greetingElement.innerText = `${greeting} 🎵`;
+    }
+
+    // --- Datos Simulados para la Grid de Acceso Rápido ---
+    const mockQuickAccess = [
+        { title: "Top Artistas", subtitle: "Artistas", link: "artistas.html", bgColor: "#440022", icon: "🎤" },
+        { title: "Nuevos Álbumes", subtitle: "Álbumes", link: "albums.html", bgColor: "#004444", icon: "💿" },
+        { title: "Tus Playlists", subtitle: "Playlists", link: "playlist.html", bgColor: "#002244", icon: "🎶" },
+        { title: "Rock Chileno", subtitle: "Playlist", link: "#", bgColor: "#333333", icon: "🎸" },
+        { title: "Lo más Escuchado", subtitle: "Estadísticas", link: "perfil.html", bgColor: "#444400", icon: "🔥" },
+        { title: "Reggaeton 2024", subtitle: "Playlist", link: "#", bgColor: "#440044", icon: "💃" },
+    ];
+
+    function createQuickAccessCard(item) {
+        const cardLink = document.createElement("a");
+        cardLink.href = item.link;
+        // La clase group permite que el botón de play aparezca al hacer hover sobre el enlace
+        cardLink.className = "group block cursor-pointer flex items-center bg-[var(--secondary-bg)] rounded-md overflow-hidden transition-colors hover:bg-[#282828]";
+
+        // Card Structure (Image/Icon on left, Text on right)
+        cardLink.innerHTML = `
+            <div class="w-16 h-16 flex-shrink-0 flex items-center justify-center text-4xl" style="background-color: ${item.bgColor};">
+                ${item.icon}
+            </div>
+            <div class="p-3 flex-grow min-w-0">
+                <div class="text-base font-bold text-white truncate">
+                    ${item.title}
+                </div>
+                <div class="text-xs text-neutral-400">
+                    ${item.subtitle}
+                </div>
+            </div>
+            <!-- Botón de Play flotante (solo visible en hover) -->
+            <button class="ml-auto mr-4 p-2 bg-[var(--highlight-color)] text-black rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform group-hover:translate-y-0 translate-y-2 shadow-lg">
+                ▶️
+            </button>
+        `;
+        return cardLink;
+    }
+
+    function renderQuickAccess() {
+        const container = document.getElementById("quick-access-grid");
+        if (!container) return;
+
+        mockQuickAccess.forEach(item => {
+            const card = createQuickAccessCard(item);
+            container.appendChild(card);
+        });
+    }
+
+
+    // --- Datos Simulados para la Fila Horizontal ---
+    const mockMadeForYou = [
+        { name: "Mix Diario 1", type: "Playlist", color: "#66ccff", icon: "🧊" },
+        { name: "Mix de Pop", type: "Género", color: "#ff6699", icon: "💖" },
+        { name: "Descubrimiento Semanal", type: "Lista", color: "#cc0000", icon: "🔍" },
+        { name: "Rap Old School", type: "Género", color: "#800080", icon: "🎙️" },
+        { name: "Rock Alternativo", type: "Género", color: "#009933", icon: "🌲" },
+        { name: "Mix Diario 2", type: "Playlist", color: "#ffcc00", icon: "🔆" },
+        { name: "Electro House", type: "Género", color: "#0000ff", icon: "⚡" },
+    ];
+    
+    function createRowCard(item) {
+        const cardLink = document.createElement("a");
+        cardLink.href = "#"; 
+        // row-card tiene el ancho fijo definido en el CSS para el scroll horizontal
+        cardLink.className = "row-card flex flex-col p-4 rounded-lg bg-[var(--secondary-bg)] hover:bg-[#282828] transition-colors duration-300 group";
+
+        // Card Structure (Cover, Title, Subtitle)
+        cardLink.innerHTML = `
+            <!-- Carátula Placeholder (Aspect ratio cuadrado) -->
+            <div class="w-full aspect-square mb-3 rounded-md flex items-center justify-center text-5xl overflow-hidden shadow-xl" style="background-color: ${item.color};">
+                <span class="text-white">${item.icon}</span>
+            </div>
+            
+            <div class="truncate text-base font-bold text-white mt-1">
+                ${item.name}
+            </div>
+            <div class="text-sm text-neutral-400">
+                ${item.type}
+            </div>
+        `;
+        return cardLink;
+    }
+
+    function renderMadeForYou() {
+        const container = document.getElementById("made-for-you-row");
+        if (!container) return;
+
+        mockMadeForYou.forEach(item => {
+            const card = createRowCard(item);
+            container.appendChild(card);
+        });
+    }
+
+    // --- Ejecución al cargar el DOM ---
+    document.addEventListener('DOMContentLoaded', () => {
+        setGreeting();
+        renderQuickAccess();
+        renderMadeForYou();
+    });
+</script>
+</body>
+</html>

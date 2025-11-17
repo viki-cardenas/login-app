@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MusicApp - Login y Dashboard Completo</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilos generales del tema oscuro */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000;
+            color: #fff;
+            margin: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Estilos de la barra lateral */
+        .sidebar {
+            width: 250px;
+            background-color: #000000;
+            border-right: 1px solid #1a1a1a;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            padding: 1.5rem 1rem;
+            z-index: 20;
+        }
+
+        /* Contenido principal, ajustado para compensar el ancho de la sidebar (solo en desktop) */
+        .main-content-wrapper {
+            margin-left: 250px; /* Margen fijo para el contenido principal */
+            padding-bottom: 5rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #121212;
+        }
+        
+        /* Media query para móvil: el contenido principal ocupa el 100% */
+        @media (max-width: 768px) {
+            .main-content-wrapper {
+                margin-left: 0;
+            }
+        }
+        
+        /* Estilos para el Login Centrado (cuando no hay sidebar) */
+        .login-view {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center; /* Centrado vertical */
+            justify-content: center; /* Centrado horizontal */
+            background: linear-gradient(135deg, #0a0a0a 0%, #121212 100%);
+        }
+
+        /* Estilos de enlaces del Sidebar */
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            color: #a7a7a7;
+            transition: color 0.2s, background-color 0.2s;
+        }
+        .sidebar-link:hover {
+            color: #fff;
+        }
+        .sidebar-link.active {
+            background-color: #1a1a1a;
+            color: #fff;
+        }
+
+        /* Scrollbar y Grid styles */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-thumb { background: #1db954; border-radius: 4px; }
+        ::-webkit-scrollbar-track { background: #282828; }
+
+        /* Grid para Álbumes */
+        .album-grid {
+            display: grid; gap: 1.5rem; grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        @media (min-width: 640px) { .album-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+        @media (min-width: 1024px) { .album-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+        @media (min-width: 1280px) { .album-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+        .album-cover {
+            width: 100%; padding-bottom: 100%; background-color: #27272a; display: flex;
+            align-items: center; justify-content: center; font-size: 1.5rem; color: #1db954;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); position: relative;
+        }
+
+        /* Grid para Artistas (Diferente estilo: Círculo) */
+        .artist-grid {
+            display: grid; gap: 1.5rem; grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        @media (min-width: 640px) { .artist-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+        @media (min-width: 1024px) { .artist-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+        @media (min-width: 1280px) { .artist-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+        .artist-cover {
+            width: 100%; padding-bottom: 100%; background-color: #27272a; display: flex;
+            align-items: center; justify-content: center; font-size: 1.5rem; color: #1db954;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); position: relative;
+            border-radius: 50%; /* Artistas en círculo */
+        }
+    </style>
+</head>
+<body id="app-body">
+    
+    <!-- Este es el único contenedor que existe al inicio, renderizará Login o la estructura completa -->
+    <div id="app-root" class="w-full min-h-screen">
+        <!-- Contenido dinámico renderizado por JS -->
+    </div>
+
+
+    <script>
+        // --- DATA DE EJEMPLO ---
+        const albumsData = [
+            { id: 1, title: 'Future Echoes', artist: 'Neon Voyager', cover: 'A' },
+            { id: 2, title: 'Midnight Drive', artist: 'Electro Pulse', cover: 'B' },
+            { id: 3, title: 'Lost in Space', artist: 'Cosmic Drift', cover: 'C' },
+            { id: 4, title: 'Green Horizon', artist: 'Synth Wave', cover: 'D' },
+            { id: 5, title: 'Data Stream', artist: 'Pixel Flow', cover: 'E' },
+            { id: 6, title: 'Silent City', artist: 'The Grid', cover: 'F' },
+            { id: 7, title: 'Rhythm of Mars', artist: 'Astro Beats', cover: 'G' },
+            { id: 8, title: 'Code Symphony', artist: 'Binary Soul', cover: 'H' },
+            { id: 9, title: 'Deep Dive', artist: 'The Current', cover: 'I' },
+            { id: 10, title: 'Lunar Base', artist: 'Zero Gravity', cover: 'J' },
+        ];
+
+        const artistsData = [
+            { id: 1, name: 'Ava Max', genre: 'Pop' },
+            { id: 2, name: 'The Weeknd', genre: 'R&B / Pop' },
+            { id: 3, name: 'Dua Lipa', genre: 'Dance-Pop' },
+            { id: 4, name: 'J Balvin', genre: 'Reggaeton' },
+            { id: 5, name: 'Doja Cat', genre: 'Hip Hop / R&B' },
+            { id: 6, name: 'Ed Sheeran', genre: 'Folk-Pop' },
+            { id: 7, name: 'Billie Eilish', genre: 'Pop Alternativo' },
+            { id: 8, name: 'Harry Styles', genre: 'Pop Rock' },
+            { id: 9, name: 'Taylor Swift', genre: 'Pop / Country' },
+            { id: 10, name: 'Bad Bunny', genre: 'Urbano Latino' },
+        ];
+
+
+        // --- VISTAS Y ESTRUCTURA DE LA APLICACIÓN ---
+        
+        /**
+         * Genera el HTML de la barra lateral (Sidebar).
+         */
+        function getSidebarHtml(activeView) {
+            // Función auxiliar para determinar si un enlace está activo
+            const isActive = (view) => view === activeView ? 'active' : '';
+
+            return `
+                <div id="sidebar" class="sidebar hidden md:block">
+                    <h1 class="text-3xl font-bold text-white mb-8 tracking-wider">
+                        MusicApp
+                    </h1>
+                    
+                    <nav class="space-y-2">
+                        <a href="#" class="sidebar-link ${isActive('dashboard')}" data-view="dashboard">
+                            <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                            Inicio
+                        </a>
+                        <a href="#" class="sidebar-link ${isActive('artists')}" data-view="artists">
+                            <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                            Artistas
+                        </a>
+                        <a href="#" class="sidebar-link ${isActive('albums')}" data-view="albums">
+                            <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13m-6 2l-1.5 2.5l-4.5-2.5V8.5L9 6v13z"></path></svg>
+                            Álbumes
+                        </a>
+                        <a href="#" class="sidebar-link ${isActive('songs')}" data-view="songs">
+                            <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-4m-2 4h4m6-12H6a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2z"></path></svg>
+                            Canciones
+                        </a>
+                        <a href="#" class="sidebar-link ${isActive('playlist')}" data-view="playlist">
+                            <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v-4m-2 4h4m4-12v4m-2-4h4m4 8h4m-2-4h4m-4 4v4m0-4h4m-4-4V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-3.586a1 1 0 00-.293-.707l-3.586-3.586A1 1 0 0013.586 10H10a1 1 0 00-1 1v2a1 1 0 001 1h3.586a1 1 0 00.707-.293l3.586-3.586a1 1 0 00.293-.707V7a2 2 0 00-2-2z"></path></svg>
+                            Playlist
+                        </a>
+                        <a href="#" class="sidebar-link ${isActive('profile')}" data-view="profile">
+                            <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 12a1 1 0 01-1-1v-1a4 4 0 00-4-4H8a4 4 0 00-4 4v1a1 1 0 01-1 1h18z"></path></svg>
+                            Perfil
+                        </a>
+                    </nav>
+                </div>
+            `;
+        }
+
+        /**
+         * Genera el HTML de la barra de reproducción inferior (Player Bar).
+         */
+        function getPlayerBarHtml() {
+            return `
+                <footer id="player-bar" class="fixed bottom-0 left-0 right-0 md:left-[250px] bg-gray-900 border-t border-green-500/20 p-3 z-30">
+                    <div class="max-w-7xl mx-auto flex items-center justify-between text-sm">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center text-xs text-green-400">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                            </div>
+                            <div>
+                                <p class="text-white font-medium truncate">Canción Sonando Ahora</p>
+                                <p class="text-gray-500">Artista Desconocido</p>
+                            </div>
+                        </div>
+                        <div class="text-green-500">
+                            0:45 / 3:30
+                        </div>
+                    </div>
+                </footer>
+            `;
+        }
+
+        /**
+         * Genera el contenido de la vista de Artistas.
+         */
+        function getArtistsView() {
+            const artistCards = artistsData.map(artist => `
+                <div class="group cursor-pointer p-3 rounded-lg transition-all duration-300 hover:bg-white/10 hover:shadow-lg text-center">
+                    <div class="artist-cover rounded-full mb-3 overflow-hidden mx-auto transition-all duration-300 group-hover:shadow-[0_0_20px_rgba(29,185,84,0.2)]">
+                         <!-- Placeholder Icon (Persona) -->
+                        <svg class="h-1/3 w-1/3 opacity-70" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+                        <div class="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100 rounded-full">
+                             <!-- Play Button Icon -->
+                             <svg class="h-10 w-10 text-green-400 transform transition-transform duration-200 group-hover:scale-110" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                        </div>
+                    </div>
+                    <p class="text-white font-semibold truncate mt-2 text-lg">${artist.name}</p>
+                    <p class="text-sm text-gray-400 truncate">${artist.genre}</p>
+                </div>
+            `).join('');
+
+            return `
+                <div class="flex-grow p-4 sm:p-8">
+                    <h2 class="text-4xl font-extrabold text-white mb-8">
+                        Explorar Artistas
+                    </h2>
+                    
+                    <section>
+                        <h3 class="text-2xl font-bold text-white mb-6">
+                            Artistas Populares
+                        </h3>
+                        
+                        <div class="artist-grid">
+                            ${artistCards}
+                        </div>
+                    </section>
+                </div>
+            `;
+        }
+
+
+        /**
+         * Genera el contenido del Dashboard (Inicio).
+         */
+        function getDashboardContent() {
+            const albumCards = albumsData.map(album => `
+                <div class="group cursor-pointer p-3 rounded-lg transition-all duration-300 hover:bg-white/10 hover:shadow-lg">
+                    <div class="album-cover rounded-lg mb-3 overflow-hidden transition-all duration-300 group-hover:shadow-[0_0_20px_rgba(29,185,84,0.2)]">
+                         <!-- Placeholder Icon -->
+                        <svg class="h-1/3 w-1/3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13m-6 2l-1.5 2.5l-4.5-2.5V8.5L9 6v13z"></path>
+                        </svg>
+                        <div class="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                             <!-- Play Button Icon -->
+                             <svg class="h-12 w-12 text-green-400 transform transition-transform duration-200 group-hover:scale-110" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                        </div>
+                    </div>
+                    <p class="text-white font-semibold truncate mt-1">${album.title}</p>
+                    <p class="text-sm text-gray-400 truncate">${album.artist}</p>
+                </div>
+            `).join('');
+
+
+            return `
+                <div class="flex-grow p-4 sm:p-8">
+                    <!-- Sección Superior de Bienvenida / Título -->
+                    <div class="bg-gray-900 rounded-lg p-6 mb-8 shadow-xl">
+                        <h2 class="text-4xl font-extrabold text-white mb-2">
+                            ¡Bienvenido de nuevo, Usuario!
+                        </h2>
+                        <p class="text-gray-400">
+                            Tu música te espera. Sigue explorando y disfrutando.
+                        </p>
+                        <button id="logout-btn" class="mt-4 text-sm font-medium text-white px-4 py-2 rounded-full bg-red-600 hover:bg-red-500 transition">
+                            Cerrar Sesión
+                        </button>
+                    </div>
+
+                    <!-- Sección de Álbumes -->
+                    <section>
+                        <h3 class="text-2xl font-bold text-white mb-6">
+                            Tus Álbumes Recientes
+                        </h3>
+                        
+                        <div class="album-grid">
+                            ${albumCards}
+                        </div>
+                    </section>
+                </div>
+            `;
+        }
+
+        /**
+         * Genera la vista completa del Dashboard (con Sidebar, Contenido y Player).
+         */
+        function getDashboardLayout(viewContent) {
+            return `
+                ${getSidebarHtml(currentView)}
+                
+                <div id="app-container" class="main-content-wrapper">
+                    ${viewContent}
+                </div>
+                
+                ${getPlayerBarHtml()}
+            `;
+        }
+
+        /**
+         * Genera la vista de Login (centrada en la pantalla).
+         */
+        function getLoginView() {
+            return `
+                <div class="login-view">
+                    <div id="login-card" class="bg-gray-800 p-8 sm:p-10 rounded-xl shadow-2xl w-full max-w-md mx-4 transition-all duration-300 transform scale-100 border border-green-500/30">
+                        
+                        <h2 class="text-3xl font-bold text-center text-green-500 mb-2 tracking-tight">
+                            Acceder
+                        </h2>
+                        <p class="text-center text-gray-400 mb-8">
+                            Ingresa para explorar tu librería de música.
+                        </p>
+
+                        <!-- Error Message Display -->
+                        <div id="error-message" class="hidden bg-red-900 border border-red-500 text-red-300 px-4 py-3 rounded-lg relative mb-4" role="alert">
+                            <span class="block sm:inline" id="error-text"></span>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Correo electrónico</label>
+                                <input type="email" id="email" value="victoria@gmail.com" placeholder="tucorreo@ejemplo.com"
+                                       class="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out placeholder-gray-500"
+                                       required>
+                            </div>
+
+                            <div>
+                                <label for="password" class="block text-sm font-medium text-gray-300 mb-1">Contraseña</label>
+                                <input type="password" id="password" value="••••" placeholder="••••••••"
+                                       class="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out placeholder-gray-500"
+                                       required>
+                            </div>
+
+                            <button id="login-btn"
+                                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-lg text-base font-semibold text-gray-900 bg-green-500 hover:bg-green-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 focus:ring-offset-gray-800 transition duration-150 ease-in-out transform hover:scale-[1.01] active:scale-[0.99]">
+                                Ingresar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+
+        // --- LÓGICA DE LA APLICACIÓN DE UNA SOLA PÁGINA (SPA) ---
+
+        let currentView = 'login'; // Estado inicial: login
+        const appRoot = document.getElementById('app-root');
+
+        /**
+         * Renderiza la vista actual y adjunta listeners.
+         */
+        function render() {
+            appRoot.innerHTML = ''; // Limpiar el contenido anterior
+
+            if (currentView === 'login') {
+                appRoot.innerHTML = getLoginView();
+            } else { // Si no es login, es una vista del dashboard (dashboard, artists, etc.)
+                let viewContent;
+                
+                switch (currentView) {
+                    case 'artists':
+                        viewContent = getArtistsView();
+                        break;
+                    case 'albums':
+                        // Placeholder para la vista de Álbumes
+                        viewContent = `<div class="p-8"><h2 class="text-4xl font-extrabold text-white mb-8">Página de Álbumes</h2><p class="text-gray-400">Contenido en desarrollo...</p></div>`;
+                        break;
+                    case 'songs':
+                        viewContent = `<div class="p-8"><h2 class="text-4xl font-extrabold text-white mb-8">Página de Canciones</h2><p class="text-gray-400">Contenido en desarrollo...</p></div>`;
+                        break;
+                    case 'playlist':
+                        viewContent = `<div class="p-8"><h2 class="text-4xl font-extrabold text-white mb-8">Página de Playlist</h2><p class="text-gray-400">Contenido en desarrollo...</p></div>`;
+                        break;
+                    case 'profile':
+                        viewContent = `<div class="p-8"><h2 class="text-4xl font-extrabold text-white mb-8">Página de Perfil</h2><p class="text-gray-400">Contenido en desarrollo...</p></div>`;
+                        break;
+                    case 'dashboard':
+                    default:
+                        viewContent = getDashboardContent();
+                        break;
+                }
+                
+                appRoot.innerHTML = getDashboardLayout(viewContent);
+            }
+
+            attachEventListeners();
+        }
+
+        /**
+         * Adjunta los manejadores de eventos a los botones de la vista actual.
+         */
+        function attachEventListeners() {
+            if (currentView === 'login') {
+                const loginBtn = document.getElementById('login-btn');
+                if (loginBtn) {
+                    loginBtn.addEventListener('click', handleLogin);
+                }
+            } else { // Vistas del Dashboard
+                const logoutBtn = document.getElementById('logout-btn');
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', handleLogout);
+                }
+
+                // Manejador de clics para los enlaces del Sidebar (cambio de vista)
+                const sidebarLinks = document.querySelectorAll('.sidebar-link');
+                sidebarLinks.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const view = e.currentTarget.getAttribute('data-view');
+                        if (view) {
+                            currentView = view;
+                            render();
+                        }
+                    });
+                });
+            }
+        }
+
+        /**
+         * Función genérica para mostrar un mensaje de error/info.
+         * @param {string} message - El mensaje a mostrar.
+         */
+        function displayError(message) {
+            const errorDiv = document.getElementById('error-message');
+            const errorText = document.getElementById('error-text');
+            if (errorDiv && errorText) {
+                errorText.textContent = message;
+                errorDiv.classList.remove('hidden');
+
+                setTimeout(() => {
+                    errorDiv.classList.add('hidden');
+                    errorText.textContent = '';
+                }, 3000);
+            }
+        }
+        
+        /**
+         * Maneja la simulación de ingreso.
+         */
+        function handleLogin() {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!email || !password) {
+                displayError("Por favor, introduce tu correo y contraseña.");
+                return;
+            }
+
+            // Simulación de autenticación exitosa
+            currentView = 'dashboard'; // Establece la vista por defecto después del login
+            render(); 
+        }
+        
+        /**
+         * Maneja la simulación de cierre de sesión.
+         */
+        function handleLogout() {
+            currentView = 'login';
+            render(); 
+        }
+
+        // --- INICIALIZACIÓN ---
+        window.onload = render;
+        
+    </script>
+</body>
+</html>

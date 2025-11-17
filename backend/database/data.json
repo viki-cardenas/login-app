@@ -1,0 +1,19 @@
+{
+  "artists": [
+    { "id": "a1", "name": "Bad Bunny" },
+    { "id": "a2", "name": "Karol G" },
+    { "id": "a3", "name": "Feid" }
+  ],
+  "albums": [
+    { "id": "al1", "title": "Un Verano Sin Ti", "artistId": "a1" },
+    { "id": "al2", "title": "Mañana Será Bonito", "artistId": "a2" }
+  ],
+  "songs": [
+    { "id": "s1", "title": "Tití Me Preguntó", "albumId": "al1", "artistId": "a1", "duration": "3:20" },
+    { "id": "s2", "title": "Provenza", "albumId": "al1", "artistId": "a1", "duration": "2:55" },
+    { "id": "s3", "title": "Tusa", "albumId": "al2", "artistId": "a2", "duration": "3:05" }
+  ],
+  "playlists": [
+    { "id": "p1", "title": "Reggaetón Mix", "songs": ["s1","s2"], "ownerId": null }
+  ]
+}

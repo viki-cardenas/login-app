@@ -1,0 +1,94 @@
+/* GENERAL */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: white;
+}
+
+/* LOGIN */
+.login-body {
+    background: #121212;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-container {
+    background: #1DB954;
+    padding: 40px;
+    border-radius: 12px;
+    width: 300px;
+    text-align: center;
+}
+
+.login-container input {
+    width: 90%;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+}
+
+.login-container button {
+    width: 100%;
+    padding: 10px;
+    background: black;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* APP */
+.app-body {
+    display: flex;
+    background: #121212;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 200px;
+    background: black;
+    padding: 20px;
+}
+
+.sidebar a {
+    display: block;
+    color: white;
+    padding: 10px 0;
+    text-decoration: none;
+}
+
+.sidebar a.active {
+    color: #1DB954;
+}
+
+.main-view {
+    flex: 1;
+    padding: 20px;
+}
+
+.cards {
+    display: flex;
+    gap: 10px;
+}
+
+.card {
+    background: #1DB954;
+    padding: 20px;
+    border-radius: 12px;
+    width: 200px;
+    text-align: center;
+}
+
+.list-container {
+    margin-top: 20px;
+}
+
+.list-item {
+    padding: 15px;
+    background: #1DB954;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}

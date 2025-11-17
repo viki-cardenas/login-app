@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playlists - MusicApp</title>
+    <!-- Carga de Tailwind CSS para un estilo moderno y responsive -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilos básicos para la estructura y el tema oscuro (copiados de las otras páginas) */
+        :root {
+            --primary-bg: #121212;
+            --secondary-bg: #1a1a1a;
+            --text-color: #ffffff;
+            --highlight-color: #1ed760;
+            --sidebar-width: 220px;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+        }
+        .app-container {
+            display: flex;
+        }
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            padding: 20px;
+            background-color: var(--secondary-bg);
+            position: fixed;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+        }
+        .sidebar h2 {
+            color: var(--text-color);
+            margin-bottom: 30px;
+            font-size: 1.5em;
+        }
+        .sidebar a {
+            display: block;
+            color: #b3b3b3;
+            text-decoration: none;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            transition: color 0.2s, background-color 0.2s;
+        }
+        .sidebar a:hover {
+            color: var(--text-color);
+            background-color: #282828;
+        }
+        .sidebar a.active {
+            color: var(--text-color);
+            background-color: #282828;
+            font-weight: bold;
+        }
+        .main-view {
+            /* Asegura que el contenido principal se desplace */
+            margin-left: var(--sidebar-width); 
+            padding: 30px;
+            flex-grow: 1;
+            min-height: 100vh;
+        }
+
+        /* Estilo para el contenedor de la carátula de playlist */
+        .playlist-cover {
+            width: 80px;
+            height: 80px;
+            background-color: #4a4a4a;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #121212;
+            overflow: hidden;
+            flex-shrink: 0; /* Evita que la carátula se encoja */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Estilo para las tarjetas de playlist en la lista principal */
+        .playlist-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background-color: var(--secondary-bg);
+            padding: 15px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+        .playlist-card:hover {
+            background-color: #282828;
+        }
+
+    </style>
+</head>
+
+<body>
+<div class="app-container">
+
+    <aside class="sidebar">
+        <h2>MusicApp</h2>
+        <!-- Menú de navegación -->
+        <a href="home.html">Inicio</a>
+        <a href="artistas.html">Artistas</a>
+        <a href="albums.html">Álbumes</a>
+        <a href="canciones.html">Canciones</a>
+        <a class="active" href="playlist.html">Playlist</a>
+        <a href="perfil.html">Perfil</a>
+    </aside>
+
+    <main class="main-view">
+        <h1 class="text-4xl font-bold mb-8">Tus Playlists</h1>
+
+        <!-- Botón para crear una nueva playlist -->
+        <button class="mb-8 px-4 py-2 bg-[var(--highlight-color)] text-black font-bold rounded-full hover:bg-green-400 transition-colors">
+            + Crear Nueva Playlist
+        </button>
+
+        <!-- Contenedor principal para la lista de playlists -->
+        <div 
+            id="playlists-container"
+            class="flex flex-col gap-4"
+        >
+            <!-- Las playlists serán insertadas aquí por JavaScript -->
+        </div>
+
+    </main>
+</div>
+
+<script>
+    // Datos simulados de playlists
+    const mockPlaylists = [
+        { name: "Reggaetón Mix", description: "Lo mejor del perreo y el urbano.", count: 45, color: "#ff6699", icon: "🔥" },
+        { name: "Pop Latino", description: "Éxitos de Shakira, Karol G y más.", count: 32, color: "#66ccff", icon: "💃" },
+        { name: "Trap 2024", description: "Los temas más duros y underground.", count: 28, color: "#800080", icon: "🌑" },
+        { name: "Rock Clásico", description: "Bandas legendarias de los 70s y 80s.", count: 60, color: "#cc0000", icon: "🎸" },
+        { name: "Chill Vibes", description: "Música tranquila para estudiar o trabajar.", count: 50, color: "#009933", icon: "☕" },
+    ];
+
+    function createPlaylistCard(playlist) {
+        const playlistLink = document.createElement("a");
+        playlistLink.href = "#"; 
+        playlistLink.className = "playlist-card"; // Usa la clase CSS definida en <style>
+
+        playlistLink.innerHTML = `
+            <div class="playlist-cover" style="background-color: ${playlist.color};">
+                <span class="text-white">${playlist.icon}</span>
+            </div>
+            <div class="flex-grow">
+                <div class="text-xl font-bold text-white truncate">
+                    ${playlist.name}
+                </div>
+                <div class="text-sm text-neutral-400 mt-1">
+                    ${playlist.description}
+                </div>
+                <div class="text-xs text-neutral-500 mt-1">
+                    ${playlist.count} canciones
+                </div>
+            </div>
+            <!-- Icono de Play (simulado) -->
+            <div class="text-[var(--highlight-color)] text-3xl opacity-0 group-hover:opacity-100 transition-opacity">
+                ▶️
+            </div>
+        `;
+
+        // Agregamos la clase 'group' al enlace para el efecto hover en el icono
+        playlistLink.classList.add('group');
+        return playlistLink;
+    }
+
+    function renderPlaylists() {
+        const container = document.getElementById("playlists-container");
+        if (!container) return;
+
+        mockPlaylists.forEach(playlist => {
+            const card = createPlaylistCard(playlist);
+            container.appendChild(card);
+        });
+    }
+
+    // Ejecutar la función cuando el DOM esté cargado
+    document.addEventListener('DOMContentLoaded', renderPlaylists);
+</script>
+</body>
+</html>
